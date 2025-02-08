@@ -1,5 +1,6 @@
 import pygame
 import input_util
+from player import Player
 
 WIDTH = input_util.get_int("how many tiles wide: ")
 HEIGHT = input_util.get_int("how many tiles tall: ")
@@ -50,8 +51,7 @@ for tile in range(WIDTH * HEIGHT):
 ####################
 ### PLAYER STUFF ###
 ####################
-player_x = 0
-player_y = 0
+player = Player(WIDTH, HEIGHT)
 # create surface the size of a tile, for the player graphics
 player_surface = pygame.Surface([SCALE, SCALE])
 # black will not get painted (treated like clear)
@@ -64,18 +64,13 @@ running = True
 while running:
     # handle inputs / events
     for event in pygame.event.get():
-        if event.type == pygame.KEYDOWN:
-            # move the player (with out of bounds checks)
-            match event.key:
-                # max returns the largest of the two
-                case pygame.K_LEFT: player_x = max(player_x - 1, 0)
-                case pygame.K_UP: player_y = max(player_y - 1, 0)
-                # min returns the smallest of the two
-                case pygame.K_RIGHT: player_x = min(player_x + 1, WIDTH - 1)
-                case pygame.K_DOWN: player_y = min(player_y + 1, HEIGHT - 1)
+        player.handle_input(event)
         # exit the game loop on quit
         if event.type == pygame.QUIT:
             running = False
+    
+    player.update()
+
     # clear the screen
     screen.fill(BLACK)
 
@@ -83,7 +78,7 @@ while running:
     screen.blit(board_surface, board_surface_rect)
 
     # add player to the screen, relative to the top left of the board
-    screen.blit(player_surface, [board_surface_rect.left + player_x * SCALE, board_surface_rect.top + player_y * SCALE])
+    screen.blit(player_surface, [board_surface_rect.left + player.x * SCALE, board_surface_rect.top + player.y * SCALE])
 
     # flip() updates the screen to make our changes visible
     pygame.display.flip()
