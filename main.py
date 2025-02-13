@@ -13,6 +13,8 @@ BLACK = (0, 0, 0)
 RED = (255, 0, 0)
 BLUE = (0, 0, 255)
 
+TARGET_FPS = 60
+
 ####################
 ### PYGAME STUFF ###
 ####################
@@ -61,6 +63,7 @@ pygame.draw.circle(player_surface, RED, player_surface.get_rect().center, SCALE 
 
 
 running = True
+frame_time = 1000 // TARGET_FPS
 while running:
     # handle inputs / events
     for event in pygame.event.get():
@@ -69,7 +72,7 @@ while running:
         if event.type == pygame.QUIT:
             running = False
     
-    player.update()
+    player.update(frame_time)
 
     # clear the screen
     screen.fill(BLACK)
@@ -84,5 +87,5 @@ while running:
     pygame.display.flip()
 
     # how many updates per second
-    clock.tick(60)
+    frame_time = clock.tick(TARGET_FPS)
 pygame.quit()
